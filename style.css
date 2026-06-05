@@ -10,8 +10,8 @@
   --color-text-dark: #8b949e;
   --color-red-piece: #ff3344;
   --color-black-piece: #22c3ff; /* 東方現代黑藍代表色 */
-  --font-chinese: 'ZCOOL XiaoWei', 'Microsoft JhengHei', serif;
-  --font-english: 'Outfit', sans-serif;
+  --font-chinese: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  --font-english: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
@@ -420,7 +420,7 @@ input:checked + .slider:before {
   gap: 12px;
   width: 100%;
   max-width: 680px;
-  aspect-ratio: 2 / 1;
+  height: 340px; /* 固定高度防止重繪時高度塌陷 */
   padding: 16px;
   background: 
     linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.85)),
@@ -535,7 +535,7 @@ input:checked + .slider:before {
 .piece-front {
   transform: rotateY(180deg);
   font-family: var(--font-chinese);
-  font-size: 1.7rem;
+  font-size: 1.45rem; /* 微調棋子字體大小 */
   font-weight: 900;
   user-select: none;
 }
@@ -697,10 +697,11 @@ input:checked + .slider:before {
   .banqi-board {
     gap: 8px;
     padding: 12px;
+    height: 280px; /* 平板高度 */
   }
   
   .piece-front {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     border-width: 2px;
   }
 
@@ -734,6 +735,7 @@ input:checked + .slider:before {
     gap: 5px;
     padding: 8px;
     border-width: 2px;
+    height: 180px; /* 手機高度，防抖動與塌陷 */
   }
 
   .piece-card {
@@ -742,7 +744,7 @@ input:checked + .slider:before {
   }
 
   .piece-front {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     border-width: 2px;
   }
 
