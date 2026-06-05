@@ -662,6 +662,7 @@ input:checked + .slider:before {
     grid-template-columns: 1fr;
     height: auto;
     overflow-y: auto;
+    gap: 20px;
   }
   .sidebar {
     width: 100%;
@@ -674,9 +675,120 @@ input:checked + .slider:before {
   }
   .board-area {
     order: 1;
-    margin: 20px 0;
+    margin: 10px 0;
   }
   .game-container {
     height: auto;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 2.2rem;
+  }
+  
+  .banqi-board {
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .piece-front {
+    font-size: 1.35rem;
+    border-width: 2px;
+  }
+
+  .captured-box {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .captured-row {
+    flex: 1;
+  }
+
+  .panel-controls {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+  }
+
+  .turn-banner {
+    font-size: 0.95rem;
+    padding: 6px 20px;
+  }
+
+  .banqi-board {
+    gap: 5px;
+    padding: 8px;
+    border-width: 2px;
+  }
+
+  .piece-card {
+    width: 95%;
+    height: 95%;
+  }
+
+  .piece-front {
+    font-size: 1.15rem;
+    border-width: 2px;
+  }
+
+  .move-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .log-box {
+    height: 100px;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .panel h2 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  
+  .setting-item {
+    margin-bottom: 8px;
+  }
+  
+  .setting-label {
+    font-size: 0.8rem;
+  }
+  
+  .toggle-group {
+    padding: 2px;
+  }
+  
+  .toggle-btn {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .switch {
+    width: 38px;
+    height: 20px;
+  }
+  
+  .slider:before {
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(18px);
   }
 }
