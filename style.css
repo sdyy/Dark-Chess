@@ -681,6 +681,12 @@ input:checked + .slider:before {
     height: auto;
     padding: 10px;
   }
+  .panel-logs {
+    max-height: 220px;
+  }
+  .log-box {
+    height: 150px;
+  }
 }
 
 @media (max-width: 768px) {
