@@ -32,6 +32,10 @@ function initGame() {
   const rules = getRulesFromUI();
   const difficulty = getDifficultyFromUI();
   
+  // 強制隱藏所有彈窗，避免卡死或重複覆蓋
+  document.getElementById('modal-gameover').classList.remove('active');
+  document.getElementById('modal-settings').classList.remove('active');
+  
   game = new Game(rules, difficulty);
   ai = new BanqiAI(difficulty);
   
@@ -138,8 +142,10 @@ async function handlePieceClick(r, c) {
       card.classList.add('revealed');
     }
     
+    const currentId = game.gameId;
     // 延遲一點點讓翻牌動畫播放
     await sleep(250);
+    if (game.gameId !== currentId) return; // 局數已變，直接中斷
     
     game.playerReveal(r, c);
     selectedPiece = null;
@@ -197,6 +203,7 @@ async function handleMove(fromR, fromC, toR, toC) {
 
   // 鎖定 UI 播放動畫
   isWaitingForAi = true;
+  const currentId = game.gameId; // 記錄當前對局識別碼
 
   const attCard = document.querySelector(`.piece-card[data-row="${fromR}"][data-col="${fromC}"]`);
   const tarCard = document.querySelector(`.piece-card[data-row="${toR}"][data-col="${toC}"]`);
@@ -207,7 +214,8 @@ async function handleMove(fromR, fromC, toR, toC) {
   } else if (moveRes.type === 'eat') {
     // 播放吃子碎裂動畫
     if (tarCard) tarCard.classList.add('shatter');
-    await sleep(500);
+    await sleep(250); // 縮短延遲，讓吃子 UI 回饋更快
+    if (game.gameId !== currentId) return;
     game.playerMove(fromR, fromC, toR, toC);
   } else if (moveRes.type === 'dark_eat') {
     // 暗吃判定
@@ -219,15 +227,18 @@ async function handleMove(fromR, fromC, toR, toC) {
         const front = tarCard.querySelector('.piece-front');
         front.className = `piece-face piece-front ${target.side.toLowerCase()}`;
         front.textContent = PIECE_NAMES[target.side][target.type];
-        await sleep(350);
+        await sleep(200); // 縮短延遲
+        if (game.gameId !== currentId) return;
         tarCard.classList.add('shatter');
       }
-      await sleep(400);
+      await sleep(200);
+      if (game.gameId !== currentId) return;
     } else {
       // 暗吃失敗：我方棋子碎裂，敵方暗棋當場翻開
       if (attCard) attCard.classList.add('shatter');
       if (tarCard) tarCard.classList.add('revealed');
-      await sleep(550);
+      await sleep(350); // 縮短延遲
+      if (game.gameId !== currentId) return;
     }
     game.playerMove(fromR, fromC, toR, toC);
   }
@@ -246,13 +257,15 @@ async function triggerAiIfNeeded() {
   if (game.isGameOver || game.currentTurn !== game.aiSide) return;
 
   isWaitingForAi = true;
+  const currentId = game.gameId; // 記錄當前對局識別碼
   
   // 更新回合提示 Banner
   const banner = document.getElementById('turn-banner');
   banner.textContent = 'AI 大師正在思考棋局...';
   
   // 思考時間模擬
-  await sleep(800);
+  await sleep(600); // 縮短思考睡眠時間，玩家體感更流暢
+  if (game.gameId !== currentId) return;
 
   const aiAction = ai.getBestMove(game);
   if (!aiAction) {
@@ -272,7 +285,8 @@ async function triggerAiIfNeeded() {
     if (card) {
       card.classList.add('revealed');
     }
-    await sleep(300);
+    await sleep(200);
+    if (game.gameId !== currentId) return;
     game.executeAiAction(aiAction);
   } else if (aiAction.type === 'move') {
     game.executeAiAction(aiAction);
@@ -287,7 +301,8 @@ async function triggerAiIfNeeded() {
 
     if (aiAction.type === 'eat') {
       if (tarCard) tarCard.classList.add('shatter');
-      await sleep(500);
+      await sleep(250);
+      if (game.gameId !== currentId) return;
     } else if (aiAction.type === 'dark_eat') {
       const canEat = game.board.canEat(attacker, target);
       if (canEat) {
@@ -296,14 +311,17 @@ async function triggerAiIfNeeded() {
           const front = tarCard.querySelector('.piece-front');
           front.className = `piece-face piece-front ${target.side.toLowerCase()}`;
           front.textContent = PIECE_NAMES[target.side][target.type];
-          await sleep(350);
+          await sleep(200);
+          if (game.gameId !== currentId) return;
           tarCard.classList.add('shatter');
         }
-        await sleep(400);
+        await sleep(200);
+        if (game.gameId !== currentId) return;
       } else {
         if (attCard) attCard.classList.add('shatter');
         if (tarCard) tarCard.classList.add('revealed');
-        await sleep(550);
+        await sleep(350);
+        if (game.gameId !== currentId) return;
       }
     }
     game.executeAiAction(aiAction);

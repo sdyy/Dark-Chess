@@ -444,13 +444,9 @@ input:checked + .slider:before {
   left: 16px;
   right: 16px;
   bottom: 16px;
-  background: 
-    linear-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212, 175, 55, 0.08) 1px, transparent 1px);
-  background-size: calc((100%) / 8) calc((100%) / 4);
   pointer-events: none;
   z-index: 0;
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.18);
 }
 
 /* 棋子 3D 容器 */
@@ -463,6 +459,20 @@ input:checked + .slider:before {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* 獨立棋格虛線描邊：直接與網格容器綁定，杜絕少子時出現的任何格線亞像素飄移 */
+.piece-slot::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border: 1px dashed rgba(212, 175, 55, 0.08);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .piece-card {

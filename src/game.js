@@ -3,6 +3,7 @@ import { SIDE, PIECE_TYPE, PIECE_NAMES } from './constants.js';
 
 export class Game {
   constructor(rules, aiDifficulty = 'Hard') {
+    this.gameId = Math.random(); // 唯一局數識別碼，防非同步競態衝突
     this.rules = rules;
     this.aiDifficulty = aiDifficulty;
     this.board = new Board(rules);
@@ -26,6 +27,7 @@ export class Game {
   }
 
   start() {
+    this.gameId = Math.random(); // 每次開始對局重新生成識別碼
     this.board.initialize();
     this.playerSide = null;
     this.aiSide = null;
