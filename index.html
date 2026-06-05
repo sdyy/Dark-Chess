@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>暗棋大師 - 中國象棋半盤對戰</title>
+  <!-- 引入 Google Fonts: Outfit (現代字體) 與 ZCOOL XiaoWei (國風楷體) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- 背景水墨微粒 -->
+  <div class="ink-bg"></div>
+
+  <div class="game-container">
+    <header class="game-header">
+      <h1 class="game-title">暗棋大師</h1>
+      <p class="game-subtitle">CHINESE BANQI MASTER</p>
+      <div id="turn-banner" class="turn-banner">
+        <span class="turn-text">請翻棋決定陣營</span>
+      </div>
+    </header>
+
+    <main class="game-layout">
+      <!-- 左側欄：對局日誌與墓碑 -->
+      <aside class="sidebar sidebar-left">
+        <div class="panel panel-captured">
+          <h2>已陣亡棋子</h2>
+          <div class="captured-box">
+            <div class="captured-row">
+              <span class="label red-label">紅方：</span>
+              <div id="captured-red" class="captured-list"></div>
+            </div>
+            <div class="captured-row">
+              <span class="label black-label">黑方：</span>
+              <div id="captured-black" class="captured-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-logs">
+          <h2>對戰日誌</h2>
+          <div id="log-box" class="log-box"></div>
+        </div>
+      </aside>
+
+      <!-- 中間：4x8 棋盤區 -->
+      <section class="board-area">
+        <div id="board" class="banqi-board"></div>
+      </section>
+
+      <!-- 右側欄：規則與設定 -->
+      <aside class="sidebar sidebar-right">
+        <div class="panel panel-settings">
+          <h2>對戰設定</h2>
+          <div class="setting-item">
+            <span class="setting-label">AI 智能難度</span>
+            <div class="toggle-group" id="ai-difficulty-group">
+              <button class="toggle-btn" data-value="Easy">休閒</button>
+              <button class="toggle-btn active" data-value="Hard">大師</button>
+            </div>
+          </div>
+          <hr class="panel-divider">
+          <div class="setting-item">
+            <span class="setting-label">將帥吃兵卒</span>
+            <label class="switch">
+              <input type="checkbox" id="rule-king-eat-soldier">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <span class="setting-label">仕士吃車俥</span>
+            <label class="switch">
+              <input type="checkbox" id="rule-advisor-eat-chariot">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <span class="setting-label">炮跳吃暗棋</span>
+            <label class="switch">
+              <input type="checkbox" id="rule-cannon-dark-eat" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <span class="setting-label">長打限制</span>
+            <label class="switch">
+              <input type="checkbox" id="rule-no-repeated-moves" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel panel-controls">
+          <button id="btn-undo" class="control-btn accent">悔棋 (Undo)</button>
+          <button id="btn-restart" class="control-btn primary">重新對局</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- 遊戲結束彈窗 -->
+  <div id="modal-gameover" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-title">對局結束</h2>
+      <p id="modal-message">恭喜紅方獲勝！</p>
+      <button id="btn-modal-restart" class="control-btn primary">再戰一局</button>
+    </div>
+  </div>
+
+  <script type="module" src="./src/ui.js"></script>
+</body>
+</html>

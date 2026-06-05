@@ -1,0 +1,682 @@
+:root {
+  --color-bg: #0b0f19;
+  --color-panel: rgba(20, 26, 38, 0.65);
+  --color-border: rgba(212, 175, 55, 0.25);
+  --color-border-active: rgba(212, 175, 55, 0.8);
+  --color-gold: #d4af37;
+  --color-red: #cf222e;
+  --color-black: #0c0d0e;
+  --color-text-light: #f6f8fa;
+  --color-text-dark: #8b949e;
+  --color-red-piece: #ff3344;
+  --color-black-piece: #22c3ff; /* 東方現代黑藍代表色 */
+  --font-chinese: 'ZCOOL XiaoWei', 'Microsoft JhengHei', serif;
+  --font-english: 'Outfit', sans-serif;
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* 全域重設與背景 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-light);
+  font-family: var(--font-english);
+  overflow-x: hidden;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 水墨微粒背景 */
+.ink-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(20, 28, 48, 0.9) 0%, rgba(11, 15, 25, 1) 90.1%),
+    radial-gradient(circle at 90% 80%, rgba(38, 25, 48, 0.15) 0%, transparent 50%);
+  background-size: cover;
+  z-index: -2;
+  overflow: hidden;
+}
+
+/* 水墨煙霧微粒動畫 */
+.ink-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise"/><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.05 0"/></filter><rect width="100%" height="100%" filter="url(%23f)"/></svg>');
+  opacity: 0.8;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 主遊戲容器 */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1300px;
+  height: 90vh;
+  padding: 20px;
+}
+
+/* 標頭樣式 */
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-title {
+  font-family: var(--font-chinese);
+  font-size: 3rem;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  margin-bottom: 4px;
+}
+
+.game-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 8px;
+  color: var(--color-text-dark);
+  text-transform: uppercase;
+}
+
+/* 回合提示條 */
+.turn-banner {
+  margin-top: 15px;
+  padding: 8px 30px;
+  border-radius: 20px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.turn-banner.red-turn {
+  background: rgba(207, 34, 46, 0.15);
+  border-color: rgba(207, 34, 46, 0.4);
+  color: #ff6b76;
+}
+
+.turn-banner.black-turn {
+  background: rgba(34, 195, 255, 0.15);
+  border-color: rgba(34, 195, 255, 0.4);
+  color: #6bd7ff;
+}
+
+/* 遊戲版面 */
+.game-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 24px;
+  width: 100%;
+  flex: 1;
+  min-height: 0; /* 讓子元素滾動不受父級 flex 限制 */
+}
+
+/* 側邊欄面板通配 */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel h2 {
+  font-family: var(--font-chinese);
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: var(--color-gold);
+  margin-bottom: 14px;
+  border-left: 3px solid var(--color-gold);
+  padding-left: 8px;
+}
+
+/* 已陣亡棋子墓碑區 */
+.captured-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.captured-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.captured-row .label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.red-label { color: #ff6b76; }
+.black-label { color: #6bd7ff; }
+
+.captured-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 40px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 墓碑小棋子樣式 */
+.captured-piece-mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-chinese);
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.captured-piece-mini.red {
+  background: radial-gradient(circle, #fff 60%, #ddd 100%);
+  color: var(--color-red);
+  border: 1px solid #ff99aa;
+}
+
+.captured-piece-mini.black {
+  background: radial-gradient(circle, #333 60%, #111 100%);
+  color: #fff;
+  border: 1px solid #555;
+  text-shadow: 0 0 2px #000;
+}
+
+/* 日誌面板 */
+.panel-logs {
+  flex: 1;
+}
+
+.log-box {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-text-dark);
+}
+
+.log-box::-webkit-scrollbar {
+  width: 4px;
+}
+
+.log-box::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.log-item {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(255,255,255,0.05);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.log-item.ai {
+  color: #afc9ff;
+}
+
+.log-item.player {
+  color: #ffebb3;
+}
+
+/* 設定面板與開關 */
+.panel-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 15px 0;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.setting-label {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+/* 切換按鈕組 */
+.toggle-group {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  padding: 2px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  border-radius: 18px;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background: var(--color-gold);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+/* iOS 風格 Switch Slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255,255,255,0.1);
+  transition: .4s;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--color-text-dark);
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: rgba(212, 175, 55, 0.2);
+  border-color: var(--color-gold);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: var(--color-gold);
+  box-shadow: 0 0 6px var(--color-gold);
+}
+
+/* 控制按鈕區 */
+.panel-controls {
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.control-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+  font-family: var(--font-chinese);
+  letter-spacing: 2px;
+}
+
+.control-btn.primary {
+  background: linear-gradient(135deg, #e5c060 0%, #aa8522 100%);
+  color: #000;
+  border-color: #f7d070;
+}
+
+.control-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.control-btn.accent {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-light);
+}
+
+.control-btn.accent:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-text-light);
+}
+
+.control-btn:active {
+  transform: translateY(0);
+}
+
+/* 棋盤主體區 */
+.board-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banqi-board {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(8, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 2 / 1;
+  padding: 16px;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.85)),
+    radial-gradient(ellipse at center, rgba(30, 40, 58, 0.6) 0%, rgba(13, 17, 25, 0.95) 100%);
+  border: 4px double var(--color-gold);
+  border-radius: 20px;
+  box-shadow: 
+    0 15px 45px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(212, 175, 55, 0.15);
+  position: relative;
+}
+
+/* 棋盤背景的線條 (仿國風棋格) */
+.banqi-board::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  background: 
+    linear-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.08) 1px, transparent 1px);
+  background-size: calc((100%) / 8) calc((100%) / 4);
+  pointer-events: none;
+  z-index: 0;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* 棋子 3D 容器 */
+.piece-slot {
+  perspective: 1000px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.piece-card {
+  width: 85%;
+  height: 85%;
+  max-width: 60px;
+  max-height: 60px;
+  aspect-ratio: 1;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+  cursor: pointer;
+}
+
+/* 點擊選中時發光 */
+.piece-card.selected {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px var(--color-gold);
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+/* 合法移動目標點提示 */
+.move-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-gold) 30%, transparent 80%);
+  box-shadow: 0 0 8px var(--color-gold);
+  opacity: 0.6;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.move-dot:hover {
+  transform: scale(1.4);
+  opacity: 0.9;
+}
+
+/* 卡片正面與背面 */
+.piece-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* 卡片背面 (隱藏) */
+.piece-back {
+  background: #181d27;
+  background-image: url('./assets/piece_back.png');
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(212, 175, 55, 0.4);
+}
+
+.piece-back:hover {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* 卡片正面 (翻開) */
+.piece-front {
+  transform: rotateY(180deg);
+  font-family: var(--font-chinese);
+  font-size: 1.7rem;
+  font-weight: 900;
+  user-select: none;
+}
+
+/* 白玉質感：紅棋 */
+.piece-front.red {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eaeaea 60%, #c0c0c0 100%);
+  color: var(--color-red);
+  border: 3px solid #ffadb4;
+  text-shadow: 1px 1px 1px rgba(255,255,255,0.8), -1px -1px 1px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 -3px 6px rgba(0,0,0,0.15);
+}
+
+/* 墨玉質感：黑棋 */
+.piece-front.black {
+  background: radial-gradient(circle at 35% 35%, #2a2a2a 0%, #151515 60%, #050505 100%);
+  color: var(--color-black-piece);
+  border: 3px solid #3a4856;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), 0 0 4px var(--color-black-piece);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+}
+
+/* 3D 翻牌類 */
+.piece-card.revealed {
+  transform: rotateY(180deg);
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 震動動畫 */
+.shake {
+  animation: shakeAction 0.4s ease;
+}
+
+@keyframes shakeAction {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* 閃爍動畫 (用於暗吃碰撞) */
+.clash-flash {
+  animation: clashFlashAction 0.5s ease-out;
+}
+
+@keyframes clashFlashAction {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(2.5) drop-shadow(0 0 15px var(--color-gold)); }
+  100% { filter: brightness(1); }
+}
+
+/* 陣亡碎裂動畫 */
+.shatter {
+  animation: shatterAction 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+}
+
+@keyframes shatterAction {
+  0% { transform: scale(1) rotateY(180deg); opacity: 1; filter: brightness(2); }
+  100% { transform: scale(0.2) rotateY(270deg) translate3d(0, -50px, 0); opacity: 0; }
+}
+
+/* 遊戲結束彈窗 */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-content {
+  background: #141a26;
+  border: 2px dashed var(--color-gold);
+  border-radius: 24px;
+  padding: 40px;
+  width: 90%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h2 {
+  font-family: var(--font-chinese);
+  font-size: 2.2rem;
+  letter-spacing: 4px;
+  color: var(--color-gold);
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  margin-bottom: 30px;
+}
+
+/* 響應式優化 */
+@media (max-width: 1200px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow-y: auto;
+  }
+  .sidebar {
+    width: 100%;
+  }
+  .sidebar-left {
+    order: 2;
+  }
+  .sidebar-right {
+    order: 3;
+  }
+  .board-area {
+    order: 1;
+    margin: 20px 0;
+  }
+  .game-container {
+    height: auto;
+  }
+}
