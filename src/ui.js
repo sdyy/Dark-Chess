@@ -528,5 +528,6 @@ function setupEventListeners() {
 
 // 啟動遊戲
 window.addEventListener('DOMContentLoaded', () => {
+  setupEventListeners();
   initGame();
 });
