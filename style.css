@@ -22,12 +22,13 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   background-color: var(--color-bg);
   color: var(--color-text-light);
   font-family: var(--font-english);
-  overflow-x: hidden;
+  overflow: hidden; /* 徹底禁止外部滾動條，防上下滑動 */
   height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -69,8 +70,10 @@ body {
   align-items: center;
   width: 100%;
   max-width: 1300px;
-  height: 90vh;
+  height: 100vh; /* 佔滿全螢幕高度 */
+  max-height: 100vh;
   padding: 20px;
+  overflow: hidden; /* 內部防止滾動 */
 }
 
 /* 標頭樣式 */
@@ -660,32 +663,36 @@ input:checked + .slider:before {
 @media (max-width: 1200px) {
   .game-layout {
     grid-template-columns: 1fr;
-    height: auto;
-    overflow-y: auto;
-    gap: 20px;
+    height: calc(100vh - 140px); /* 扣除 Header 高度，填滿剩餘視窗 */
+    overflow: hidden;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .sidebar {
     width: 100%;
+    gap: 10px;
   }
   .sidebar-left {
-    order: 2;
+    order: 3; /* 墓碑日誌擺最底下 */
   }
   .sidebar-right {
-    order: 3;
+    order: 2; /* 按鈕擺在棋盤正下方，好點擊 */
   }
   .board-area {
     order: 1;
-    margin: 10px 0;
+    margin: 5px 0;
   }
   .game-container {
-    height: auto;
+    height: 100vh;
     padding: 10px;
   }
   .panel-logs {
-    max-height: 220px;
+    max-height: 120px;
   }
   .log-box {
-    height: 150px;
+    height: 70px;
   }
 }
 
@@ -724,11 +731,13 @@ input:checked + .slider:before {
   .game-title {
     font-size: 1.8rem;
     letter-spacing: 3px;
+    margin-bottom: 2px;
   }
 
   .turn-banner {
     font-size: 0.95rem;
     padding: 6px 20px;
+    margin-top: 8px;
   }
 
   .banqi-board {
@@ -754,17 +763,17 @@ input:checked + .slider:before {
   }
 
   .log-box {
-    height: 100px;
+    height: 60px; /* 縮小日誌容器，保留 2-3 行高度即可 */
   }
 
   .panel {
-    padding: 12px;
+    padding: 10px;
     border-radius: 12px;
   }
   
   .panel h2 {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
+    font-size: 1.0rem;
+    margin-bottom: 6px;
   }
   
   .setting-item {

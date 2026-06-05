@@ -51,54 +51,60 @@
         <div id="board" class="banqi-board"></div>
       </section>
 
-      <!-- 右側欄：規則與設定 -->
+      <!-- 右側欄：控制面板 -->
       <aside class="sidebar sidebar-right">
-        <div class="panel panel-settings">
-          <h2>對戰設定</h2>
-          <div class="setting-item">
-            <span class="setting-label">AI 智能難度</span>
-            <div class="toggle-group" id="ai-difficulty-group">
-              <button class="toggle-btn" data-value="Easy">休閒</button>
-              <button class="toggle-btn active" data-value="Hard">大師</button>
-            </div>
-          </div>
-          <hr class="panel-divider">
-          <div class="setting-item">
-            <span class="setting-label">將帥吃兵卒</span>
-            <label class="switch">
-              <input type="checkbox" id="rule-king-eat-soldier">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <span class="setting-label">仕士吃車俥</span>
-            <label class="switch">
-              <input type="checkbox" id="rule-advisor-eat-chariot">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <span class="setting-label">炮跳吃暗棋</span>
-            <label class="switch">
-              <input type="checkbox" id="rule-cannon-dark-eat" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <span class="setting-label">長打限制</span>
-            <label class="switch">
-              <input type="checkbox" id="rule-no-repeated-moves" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
         <div class="panel panel-controls">
+          <h2>對局控制</h2>
           <button id="btn-undo" class="control-btn accent">悔棋 (Undo)</button>
+          <button id="btn-settings" class="control-btn accent">遊戲設定 ⚙️</button>
           <button id="btn-restart" class="control-btn primary">重新對局</button>
         </div>
       </aside>
     </main>
+  </div>
+
+  <!-- 遊戲設定彈窗 -->
+  <div id="modal-settings" class="modal">
+    <div class="modal-content">
+      <h2>對戰設定</h2>
+      <div class="setting-item">
+        <span class="setting-label">AI 智能難度</span>
+        <div class="toggle-group" id="ai-difficulty-group">
+          <button class="toggle-btn" data-value="Easy">休閒</button>
+          <button class="toggle-btn active" data-value="Hard">大師</button>
+        </div>
+      </div>
+      <hr class="panel-divider">
+      <div class="setting-item">
+        <span class="setting-label">將帥吃兵卒</span>
+        <label class="switch">
+          <input type="checkbox" id="rule-king-eat-soldier">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">仕士吃車俥</span>
+        <label class="switch">
+          <input type="checkbox" id="rule-advisor-eat-chariot">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">炮跳吃暗棋</span>
+        <label class="switch">
+          <input type="checkbox" id="rule-cannon-dark-eat" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">長打限制</span>
+        <label class="switch">
+          <input type="checkbox" id="rule-no-repeated-moves" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button id="btn-settings-close" class="control-btn primary" style="margin-top: 20px;">確認並關閉</button>
+    </div>
   </div>
 
   <!-- 遊戲結束彈窗 -->

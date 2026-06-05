@@ -495,6 +495,16 @@ function setupEventListeners() {
     document.getElementById('modal-gameover').classList.remove('active');
     initGame();
   });
+
+  // 遊戲設定彈窗控制
+  document.getElementById('btn-settings').addEventListener('click', () => {
+    document.getElementById('modal-settings').classList.add('active');
+  });
+
+  document.getElementById('btn-settings-close').addEventListener('click', () => {
+    document.getElementById('modal-settings').classList.remove('active');
+    updateSettings();
+  });
 }
 
 // 啟動遊戲
