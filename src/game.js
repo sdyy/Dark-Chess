@@ -218,12 +218,18 @@ export class Game {
       this.logs.push(`玩家 用【${attSide} ${attName}】暗吃 (${toR+1}, ${toC+1})，成功吃掉隱藏的【${tarSide} ${tarName}】！`);
       this.recordMove(this.playerSide, 'dark_eat_success', { r: fromR, c: fromC }, { r: toR, c: toC }, target);
     } else if (res.actionType === 'dark_eat_fail') {
-      const target = res.revealedPiece; // 翻開後的敵子
+      const target = res.revealedPiece; // 翻開後的棋子
       const tarName = PIECE_NAMES[target.side][target.type];
       const tarSide = target.side === SIDE.RED ? '紅' : '黑';
       const deadAttacker = res.attackerPiece;
       this.capturedPieces[deadAttacker.side].push(deadAttacker);
-      this.logs.push(`玩家 用【${attSide} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗！隱藏棋子為【${tarSide} ${tarName}】，【${attSide} ${attName}】陣亡。`);
+
+      const isFriendlyFire = deadAttacker.side === target.side;
+      if (isFriendlyFire) {
+        this.logs.push(`玩家 用【${attSide} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗（撞到自己人的【${tarSide} ${tarName}】）！我方【${attSide} ${attName}】陣亡。`);
+      } else {
+        this.logs.push(`玩家 用【${attSide} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗（對方的【${tarSide} ${tarName}】較大）！我方【${attSide} ${attName}】陣亡。`);
+      }
       this.recordMove(this.playerSide, 'dark_eat_fail', { r: fromR, c: fromC }, { r: toR, c: toC }, target);
     }
 
@@ -306,7 +312,13 @@ export class Game {
         const tarSide = target.side === SIDE.RED ? '紅' : '黑';
         const deadAttacker = res.attackerPiece;
         this.capturedPieces[deadAttacker.side].push(deadAttacker);
-        this.logs.push(`AI 用【${sideName} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗！隱藏為【${tarSide} ${tarName}】，【${sideName} ${attName}】陣亡。`);
+
+        const isFriendlyFire = deadAttacker.side === target.side;
+        if (isFriendlyFire) {
+          this.logs.push(`AI 用【${sideName} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗（撞到自己人的【${tarSide} ${tarName}】）！AI【${sideName} ${attName}】陣亡。`);
+        } else {
+          this.logs.push(`AI 用【${sideName} ${attName}】暗吃 (${toR+1}, ${toC+1}) 失敗（對方的【${tarSide} ${tarName}】較大）！AI【${sideName} ${attName}】陣亡。`);
+        }
         this.recordMove(this.aiSide, 'dark_eat_fail', { r: fromR, c: fromC }, { r: toR, c: toC }, target);
       }
     }
