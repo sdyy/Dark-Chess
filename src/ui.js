@@ -115,7 +115,16 @@ async function handlePieceClick(r, c) {
   const piece = game.board.getPiece(r, c);
   if (!piece) return;
 
-  // 1. 翻棋
+  // 檢查是否是已選中棋子的合法移動/吃子/暗吃目標
+  const isMoveValid = selectedPiece && validMovesForSelected.some(m => m.to.r === r && m.to.c === c);
+
+  // 1. 執行吃子或暗吃 (若已選中棋子且該步合法)
+  if (selectedPiece && isMoveValid) {
+    handleMove(selectedPiece.r, selectedPiece.c, r, c);
+    return;
+  }
+
+  // 2. 翻棋 (若棋子尚未翻開)
   if (!piece.revealed) {
     // 只能在屬於玩家的回合翻棋 (第一步時 currentTurn 為 null，允許翻棋)
     if (game.currentTurn && game.currentTurn !== game.playerSide) {
@@ -142,7 +151,7 @@ async function handlePieceClick(r, c) {
     return;
   }
 
-  // 2. 選中我方棋子
+  // 3. 選中我方棋子
   if (piece.side === game.playerSide) {
     if (game.currentTurn !== game.playerSide) {
       showToast('現在是 AI 的回合！');
@@ -161,18 +170,10 @@ async function handlePieceClick(r, c) {
     return;
   }
 
-  // 3. 點擊敵方棋子（已翻開或未翻開的暗吃）
-  if (selectedPiece) {
-    const isMoveValid = validMovesForSelected.some(m => m.to.r === r && m.to.c === c);
-    if (isMoveValid) {
-      handleMove(selectedPiece.r, selectedPiece.c, r, c);
-    } else {
-      // 點擊非合法目標，視為取消選取或改選
-      selectedPiece = null;
-      validMovesForSelected = [];
-      render();
-    }
-  }
+  // 4. 點擊敵方已翻開棋子，但步法不合法：視為取消選取
+  selectedPiece = null;
+  validMovesForSelected = [];
+  render();
 }
 
 // 處理移動與吃子 (含暗吃動畫)
